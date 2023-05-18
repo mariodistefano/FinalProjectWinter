@@ -77,9 +77,11 @@ namespace Middleware
             foodServices.CreateProviderFactory(ref input);
         }
         public void ShowMenu(ref char input)// Show Menu with all items 
-        {
+        { 
+
             string MenuInput = null;
             Console.Clear();
+            getAllThresds();
 
             menu = foodServices.GetMenu();
            
@@ -237,12 +239,12 @@ namespace Middleware
             ShowMenuTypes(ref input);
             //  foodServices.CreateProviderFactory(ref input);
 
-            if (input == 'E')
+            if (input == 'Q')
                 return;
 
             //  ShowMenuTypes(ref input);
 
-            if (input == 'E')
+            if (input == 'Q')
                 return;
 
             foodServices.GetProvider(distance);
@@ -257,12 +259,12 @@ namespace Middleware
                 Console.WriteLine("Sending Order... ");
                 await Task.Delay(2000);
 
-                 Order response = await foodServices.SendOrder();
-                if (response is not null)
+                 OrderResponse response = await foodServices.SendOrder();
+                if (response.Order is not null)
                 {
                   
                     Console.WriteLine("\n\n\n");
-                    FeedBack("You Order is Here!! ", response);
+                    FeedBack("You Order is Here!! ", response.Order);
                   
 
                 }
@@ -270,7 +272,9 @@ namespace Middleware
                 {
                     Console.BackgroundColor = ConsoleColor.DarkRed;
                     Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine(" No Orders to be Sent! Please, add items to basket! ");
+                    Console.WriteLine("There's was an error with your Order. Please, Try again!");
+                    Console.WriteLine(response.Error);
+                    Console.WriteLine(response.Error);
                     Console.WriteLine();
                     Console.ResetColor();
                 }
@@ -303,11 +307,33 @@ namespace Middleware
                 Console.WriteLine($"    {item.Name}");
             }
 
-
+           // getAllThresds();
 
             Thread.Sleep(2000); 
         }
-         
+        public static void getAllThresds()
+        {
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine("ThreadPool PendingWorkItemCount:");
+            Console.Write(ThreadPool.PendingWorkItemCount);
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------------------");
+
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine("ThreadPool ThreadCount :");
+            Console.Write(ThreadPool.ThreadCount);
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------------------");
+
+            Console.WriteLine("---------------------------------------------------------------");
+            Console.WriteLine("ThreadPool CompletedWorkItemCount  :");
+            Console.Write(ThreadPool.CompletedWorkItemCount);
+            Console.WriteLine();
+            Console.WriteLine("---------------------------------------------------------------");
+
+
+        }
+
 
     }
 }

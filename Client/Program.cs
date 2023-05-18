@@ -18,9 +18,15 @@ namespace Client
         static Action<string, Order> feedback ;
         static async Task Main(string[] args)
         {
+
+
+                
+           
             do
             {
                 Console.Clear();
+               // FoodUI.getAllThresds();
+
 
                 do
                 {
@@ -32,22 +38,29 @@ namespace Client
                     Console.WriteLine("   2.Tranlation");
                     Console.WriteLine("   Q. for quit");
 
-                    input = char.ToUpper(Console.ReadKey().KeyChar);
+                    input = char.ToUpper(Console.ReadKey().KeyChar);                   
+
 
                 } while (input != 'Q' && input != '1' && input != '2');
+
+                if (input == 'Q')
+                    return;
+
                 int inputNumber = CharUnicodeInfo.GetDecimalDigitValue(input);
                 Console.Clear();
-
+               
                 switch (inputNumber)
                 { 
 
-                    case 1:
+                    case 1:  
                         foodServices = new FoodServices();
                         foodUI = new((FoodServices)foodServices, distance);
-                        feedback = foodUI.Notify;
+                        feedback = foodUI.Notify; 
                         foodUI.Start(ref input);
+
+                       
                         do
-                        {
+                            {
 
                             switch (input)
                             {
@@ -66,6 +79,9 @@ namespace Client
                                 case 'E':
                                     input = 'Q';
                                     break;
+                                case 'Q':
+                                    return;
+                                    break;
                                 default:
                                     foodUI.ShowMenu(ref input);
                                     break;
@@ -79,11 +95,16 @@ namespace Client
 
                 }
                 Console.ResetColor();
+
+
                 if (input == 'E')
                     return;
+
+
             } while (input != 'E') ;
 
-            }
+         } 
+       
 
 
     } 

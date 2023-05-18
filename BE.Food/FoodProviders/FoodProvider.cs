@@ -58,7 +58,7 @@ namespace FinalTest.BackEnd.ProductProvider
         {
         }        
         void DeliverOrder(Order order) { }
-        async Task<Order> CreateOrder(Basket basket)
+        async Task<OrderResponse> CreateOrder(Basket basket)
         {
             Order newOrder = new();
             try
@@ -68,30 +68,25 @@ namespace FinalTest.BackEnd.ProductProvider
                     FoodProductOrder foodProduct = this.Menu.Where(i => i.FoodCode == item.FoodCode).FirstOrDefault();
                     foodProduct.Order = newOrder;
                     newOrder.foodItems.Add(foodProduct);
-                }
-               
-                //await Task.Run(() =>
-                //{ 
-                   
-                //    this.Orders.Enqueue(newOrder);
+                }                                
 
-                //    if (!KitchenIsWorking)
-                //        TakeOrdersToCook();
-                //});               
+                if (Orders.Any())
+                {
                     this.Orders.Dequeue();
+                }
 
                 this.Orders.Enqueue(newOrder);
 
                     if (!KitchenIsWorking)
                         TakeOrdersToCook();
-            
 
-                var bag =  await  CompleteOrders(newOrder);
-              return bag;
+
+                OrderResponse bag =  await  CompleteOrders(newOrder);
+                return bag;
             }
             catch (Exception ex)
-            {  
-                 return null;   
+            {
+                return new OrderResponse() {  Error = ex.Message +"\n" + ex.StackTrace, Order = null  } ;   
             }
             
         }
@@ -112,7 +107,7 @@ namespace FinalTest.BackEnd.ProductProvider
             Thread.Sleep(random.Next(1000, 10000));
             return new TimeSpan(random.Next(60, 3600)).TotalMinutes;
         }
-        public async Task<Order> PlaceOrder(Basket basket)
+        public async Task<OrderResponse> PlaceOrder(Basket basket)
         {
            return await CreateOrder(basket);           
         }
@@ -142,19 +137,34 @@ namespace FinalTest.BackEnd.ProductProvider
             KitchenIsWorking = false;
 
         }
-       internal async Task<Order> CompleteOrders(Order OrderToComplete)
+       internal async Task<OrderResponse> CompleteOrders(Order OrderToComplete)
         {
 
-            cookingPlate.Cook(OrderToComplete);
-
-            while (OrderToComplete.foodItems.Where(f => f.isReady == false).Any())
+            try
             {
-               // Finchè c'è qualsosa in piastra
+                cookingPlate.Cook(OrderToComplete);
+
+                while (OrderToComplete.foodItems.Where(f => f.isReady == false).Any())
+                {
+                    // Finchè c'è qualsosa in piastra
+                }
+                OrderToComplete.isReady = true;
+
+                Console.WriteLine($" Elements in queue: {Orders.Count()} ");
+                Console.WriteLine($" Removing from Queue .....");
+                await Task.Delay(3000);
+
+                Orders.TryDequeue(out OrderToComplete);
+
+                Console.WriteLine($" Elements in queue: {Orders.Count()} ");
+
+
+                return new OrderResponse() {  Order = OrderToComplete } ;
             }
-            OrderToComplete.isReady = true;
-            Orders.TryDequeue(out OrderToComplete);
-            return OrderToComplete;
-              
+            catch 
+            {
+                throw;
+            }
         }
     }
 

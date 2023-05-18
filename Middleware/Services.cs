@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static FinalTest.BackEnd.Product.FoodProduct;
 
@@ -63,17 +64,17 @@ namespace Middleware
         public void ShowBasket()
         { 
         }
-        public async Task<Order> SendOrder()
+        public async Task<OrderResponse> SendOrder()
         {
             await Task.Delay(1000);
 
             if (basket.foodProductOrder.Count == 0 )
             {  
                 return null;    
-            }
-
-            Order order =  await  ProductProvider.PlaceOrder(basket);
-            return order;
-        }
+            }           
+            OrderResponse ResOrder =  await  ProductProvider.PlaceOrder(basket); 
+            return ResOrder;
+        } 
+        
     }
 }

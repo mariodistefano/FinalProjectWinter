@@ -24,11 +24,19 @@ namespace BE.Food.Models
             }
         }
         public  void AddFoodToPlate(FoodProductOrder foodItem)
-        {   
-            var elemet = Array.Find(plates, i=> i ==  null);
-            int index = Array.IndexOf(plates, elemet);
-            plates[index] = foodItem;
-            plates[index].inPreparation = true;
+        {
+            try
+            {
+                var elemet = Array.Find(plates, i => i == null);
+                int index = Array.IndexOf(plates, elemet);
+                plates[index] = foodItem;
+                plates[index].inPreparation = true;
+            }
+            catch 
+            {
+
+                throw; 
+            }
         }
         public  void RemoveFoodFromPlate(FoodProductOrder foodItem)
         {           
@@ -43,15 +51,27 @@ namespace BE.Food.Models
         }
        internal async Task Cook(Order order)
         {
-                var item = plates.Where(i => i.Order.OrderId == order.OrderId).FirstOrDefault();
-                item.Order.foodItems.ForEach(i => Task.WaitAll(Task.Run(async () =>
+            try
+            {
+                var item = plates
+                    .Where(i => i.Order.OrderId == order.OrderId)
+                    .FirstOrDefault();
+
+                item.Order.foodItems.ForEach(i => Task.WaitAll(Task.Run( async () =>
                 {
                     await Task.Delay(random.Next(15000, 20000));
                     i.isReady = true;
                     this.RemoveFoodFromPlate(i);
                 })));
-               
-            
+            }
+            catch
+            {
+
+                throw ;
+
+            }
+
+
         }
     }
 }

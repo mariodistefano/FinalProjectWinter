@@ -26,7 +26,7 @@ namespace FinalTest.BackEnd.DesignPattern
     public interface IFoodProductProvider : IFoodObserver
     {      
         public bool CheckIsOpened();
-        public Task<Order> PlaceOrder(Basket basket);
+        public Task<OrderResponse> PlaceOrder(Basket basket);
        
     }  
     
